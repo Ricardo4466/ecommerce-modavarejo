@@ -1,4 +1,4 @@
-# Styleware — e-commerce de moda e varejo (demo)
+# StyleWare — e-commerce de moda e varejo (demo)
 
 Repositório e pasta raiz: **`ecommerce-modavarejo`** (igual ao nome no `package.json`).
 

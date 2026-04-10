@@ -16,7 +16,7 @@ export function useProductDetailSeo(product: Product | undefined) {
     const meta = document.querySelector<HTMLMetaElement>('meta[name="description"]')
     const prevDescription = meta?.content ?? ''
 
-    document.title = `${product.name} · ${product.brand} | Styleware`
+    document.title = `${product.name} · ${product.brand} | StyleWare`
     if (meta) {
       meta.content = truncateMeta(product.description, 158)
     }

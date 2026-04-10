@@ -42,7 +42,7 @@ export function MainLayout() {
                 >
                   <span className="shell__brand-mark hidden md:block">Admin</span>
                   <span className="shell__brand-accent hidden md:block" aria-hidden />
-                  Styleware
+                  StyleWare
                 </Link>
                 <div className="ml-auto flex shrink-0 items-center gap-2 md:ml-auto">
                   <ThemeToggle variant="binary" />
@@ -61,7 +61,7 @@ export function MainLayout() {
                 <div className="flex min-w-0 max-md:flex-1 max-md:min-w-0 items-center gap-2 md:min-w-0 md:shrink">
                   <button
                     type="button"
-                    className="shell__icon-btn shrink-0 md:hidden"
+                    className="shell__icon-btn shrink-0 md:hidden!"
                     aria-expanded={menuOpen}
                     aria-controls="mobile-drawer"
                     aria-label="Abrir menu"
@@ -75,7 +75,7 @@ export function MainLayout() {
                   >
                     <span className="shell__brand-mark hidden md:block">Moda & varejo</span>
                     <span className="shell__brand-accent hidden md:block" aria-hidden />
-                    Styleware
+                    StyleWare
                   </Link>
                 </div>
 
@@ -122,8 +122,10 @@ export function MainLayout() {
                             : 'Favoritos'
                         }
                       >
-                        Favoritos
-                        <NavBadgeCount count={favoriteCount} className="shell__badge" />
+                        <span className="shell__nav-link__label">
+                          Favoritos
+                          <NavBadgeCount count={favoriteCount} className="shell__badge" />
+                        </span>
                       </Link>
                       <Link
                         to={ROUTES.cart}
@@ -132,8 +134,10 @@ export function MainLayout() {
                           itemCount > 0 ? `Carrinho, ${itemCount} itens` : 'Carrinho'
                         }
                       >
-                        Carrinho
-                        <NavBadgeCount count={itemCount} className="shell__badge" />
+                        <span className="shell__nav-link__label">
+                          Carrinho
+                          <NavBadgeCount count={itemCount} className="shell__badge" />
+                        </span>
                       </Link>
                     </div>
                     <div className="shell__nav-theme">
@@ -158,7 +162,7 @@ export function MainLayout() {
       <footer className="shell__footer">
         <div className="shell__footer-inner">
           <div className="shell__footer-brand">
-            <p className="shell__footer-logo">Styleware</p>
+            <p className="shell__footer-logo">StyleWare</p>
             <p className="shell__footer-tagline muted">
               Vitrine de moda com condição comercial clara (novo, usado ou excelente estado),
               experiência mobile-first e checkout preparado para escalar.
@@ -186,7 +190,7 @@ export function MainLayout() {
           </div>
         </div>
         <p className="shell__footer-meta muted">
-          © {new Date().getFullYear()} Styleware · Vitrine técnica
+          © {new Date().getFullYear()} StyleWare · Vitrine técnica
         </p>
       </footer>
     </div>

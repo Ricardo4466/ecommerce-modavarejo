@@ -894,9 +894,21 @@ a.shell__icon-btn {
   border-color: color-mix(in oklch, var(--border) 48%, transparent);
 }
 
-.shell__nav-link--badged {
-  /* Espaço reservado para o badge não sobrepor o texto */
-  padding-right: 2rem;
+/* Rótulo + contador em linha — o badge não sobrepõe o texto */
+.shell__nav-link__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: nowrap;
+  max-width: 100%;
+}
+
+.shell__nav-link__label .shell__badge:not(.shell__badge--icon) {
+  position: static;
+  top: auto;
+  right: auto;
+  margin: 0;
+  flex-shrink: 0;
 }
 
 .shell__nav-theme {
@@ -910,7 +922,6 @@ a.shell__icon-btn {
 
 .shell__badge {
   position: absolute;
-  /* Centraliza na faixa do link; evita cobrir letras no canto superior direito */
   top: calc(50% - 0.5625rem);
   right: 0.45rem;
   box-sizing: border-box;
