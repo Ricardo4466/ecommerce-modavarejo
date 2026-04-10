@@ -1,7 +1,8 @@
 import type { HttpError } from '@/lib/http/types'
 
 function getBaseUrl(): string {
-  return import.meta.env.VITE_API_URL ?? ''
+  const raw = import.meta.env.VITE_API_URL ?? ''
+  return raw.replace(/\/+$/, '')
 }
 
 function toHttpError(status: number, message: string): HttpError {
