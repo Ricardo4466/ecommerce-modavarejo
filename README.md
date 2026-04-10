@@ -4,6 +4,10 @@ Repositório e pasta raiz: **`ecommerce-modavarejo`** (igual ao nome no `package
 
 **Demo (Vercel):** https://ecommerce-modavarejo.vercel.app
 
+Na Vercel, rotas do React Router (ex.: `/favoritos`, `/produto/...`) precisam de **rewrite** para `index.html`; o arquivo [`vercel.json`](vercel.json) na raiz faz isso. Sem ele, abrir essas URLs diretamente no navegador retorna 404; navegar pelos links internos continua funcionando.
+
+**Apresentação (roteiro em tópicos):** [`docs/roteiro-apresentacao.md`](docs/roteiro-apresentacao.md)
+
 Aplicação front-end de catálogo e carrinho alinhada ao **case técnico Moda & Varejo**: categorias **masculino**, **feminino** e **acessórios**, com **condição comercial** explícita em cada produto (**novo**, **usado**, **excelente estado**), filtros na PLP e badges na vitrine e na PDP.
 
 Stack: **React 19**, **Vite**, **TypeScript**, **Tailwind CSS v4** e **React Router 7**. O catálogo vem de uma **API REST local** (`server/`, Express) que reutiliza o mesmo mock TypeScript do front; em desenvolvimento o Vite **proxy** encaminha `/api` para a API (padrão `http://localhost:3001` se você sobe só `dev:api`; **`npm run dev:full` usa a porta 3031** para evitar conflito com outro processo na 3001). O foco é arquitetura, estado global e UX **mobile-first**.
