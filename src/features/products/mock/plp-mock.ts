@@ -310,10 +310,10 @@ export const PLP_MOCK_PRODUCTS: Product[] = [
     condition: 'usado',
     brand: 'Linha do Sul',
     brandSlug: 'linha-do-sul',
-    imageUrl: fashionPhoto('1591195853828-11db59a44f6b', 400),
+    imageUrl: fashionPhoto('1612913334025-bedf136f8715', 400),
     galleryUrls: galleryThree(
-      '1591195853828-11db59a44f6b',
       '1612913334025-bedf136f8715',
+      '1591195853828-11db59a44f6b',
       '1617951907145-53f6eb87a3a3',
     ),
     stock: 7,
