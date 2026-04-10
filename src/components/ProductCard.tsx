@@ -143,7 +143,7 @@ export function ProductCard({
   return (
     <motion.article
       className={cn(
-        'group/card relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/95 sm:rounded-3xl',
+        'group/card relative isolate flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/95 sm:rounded-3xl',
         'shadow-sm shadow-foreground/[0.03] ring-1 ring-foreground/[0.04] transition-[box-shadow,border-color,ring-color,transform]',
         'duration-500 [transition-timing-function:cubic-bezier(0.33,1,0.68,1)]',
         'hover:border-primary/25 hover:shadow-xl hover:shadow-primary/[0.06] hover:ring-primary/15',

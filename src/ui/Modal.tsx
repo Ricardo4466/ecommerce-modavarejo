@@ -48,7 +48,7 @@ export function Modal({
     <dialog
       ref={ref}
       className={cn(
-        'modal-sheet-root fixed inset-0 z-[70] m-0 h-[100dvh] max-h-[100dvh] w-full max-w-none translate-x-0 translate-y-0 border-0 bg-transparent p-0 text-foreground shadow-none backdrop:bg-black/45 open:flex open:flex-col md:backdrop:bg-black/50',
+        'modal-sheet-root fixed inset-0 z-[70] m-0 w-full max-w-none translate-x-0 translate-y-0 border-0 bg-transparent p-0 text-foreground shadow-none backdrop:bg-black/45 open:flex open:flex-col md:backdrop:bg-black/50',
         className,
       )}
       aria-labelledby="modal-title"
@@ -61,7 +61,7 @@ export function Modal({
       >
         <div
           className={cn(
-            'flex max-h-[min(92dvh,56rem)] min-h-0 w-full flex-shrink-0 flex-col overflow-hidden rounded-t-3xl border border-border border-b-0 bg-card pt-0 shadow-2xl md:max-h-[min(90dvh,640px)] md:w-[min(100%-1.5rem,28rem)] md:rounded-2xl md:border-b',
+            'modal-sheet-panel flex min-h-0 w-full flex-shrink-0 flex-col overflow-hidden rounded-t-3xl border border-border border-b-0 bg-card pt-0 shadow-2xl md:w-[min(100%-1.5rem,28rem)] md:rounded-2xl md:border-b',
             'pb-[max(0px,env(safe-area-inset-bottom))]',
           )}
           onClick={(e) => e.stopPropagation()}
