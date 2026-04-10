@@ -895,7 +895,8 @@ a.shell__icon-btn {
 }
 
 .shell__nav-link--badged {
-  padding-right: 1.1rem;
+  /* Espaço reservado para o badge não sobrepor o texto */
+  padding-right: 2rem;
 }
 
 .shell__nav-theme {
@@ -909,8 +910,9 @@ a.shell__icon-btn {
 
 .shell__badge {
   position: absolute;
-  top: 0.15rem;
-  right: 0.2rem;
+  /* Centraliza na faixa do link; evita cobrir letras no canto superior direito */
+  top: calc(50% - 0.5625rem);
+  right: 0.45rem;
   box-sizing: border-box;
   /* Framer Motion pode definir display no span; manter flex para centralizar o número */
   display: inline-flex !important;
@@ -927,8 +929,8 @@ a.shell__icon-btn {
   line-height: 1;
   letter-spacing: -0.02em;
   text-align: center;
-  background: var(--primary);
-  color: var(--primary-foreground);
+  background: var(--destructive);
+  color: var(--destructive-foreground);
   border: 2px solid var(--background);
   box-shadow: var(--shadow-xs);
   pointer-events: none;
@@ -936,8 +938,8 @@ a.shell__icon-btn {
 
 /* Deve vir após `.shell__badge` para sobrescrever tamanho no header mobile */
 .shell__badge--icon {
-  top: 0.1rem;
-  right: 0.1rem;
+  top: calc(50% - 0.5rem);
+  right: 0.2rem;
   min-width: 1rem;
   height: 1rem;
   padding: 0 0.2rem;
