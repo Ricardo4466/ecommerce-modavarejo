@@ -15,7 +15,7 @@ export function NavBadgeCount({ count, className }: NavBadgeCountProps) {
     <AnimatePresence>
       {count > 0 ? (
         <motion.span
-          key={count}
+          key="nav-badge"
           initial={{ opacity: 0, scale: 0.86 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.86 }}
