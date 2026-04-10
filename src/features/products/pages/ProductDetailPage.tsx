@@ -7,6 +7,7 @@ import { ROUTES } from '@/lib/routes'
 import { Breadcrumb, Button, StarRating } from '@/ui'
 import { useCart } from '@/features/cart/hooks/useCart'
 import { FavoriteButton } from '@/features/products/components/FavoriteButton'
+import { ProductShareButton } from '@/features/products/components/ProductShareButton'
 import { ProductDetailBackButton } from '@/features/products/components/ProductDetailBackButton'
 import { ProductImageGallery } from '@/features/products/components/ProductImageGallery'
 import { ProductDetailLoadError } from '@/features/products/components/ProductDetailLoadError'
@@ -95,7 +96,10 @@ export function ProductDetailPage() {
               <h1 className="text-3xl font-bold leading-tight tracking-tight text-text-h md:text-4xl">
                 {data.name}
               </h1>
-              <FavoriteButton productId={data.id} className="shrink-0 self-start" />
+              <div className="flex shrink-0 items-center gap-1 self-start">
+                <ProductShareButton productName={data.name} />
+                <FavoriteButton productId={data.id} />
+              </div>
             </div>
             <p
               className={cn(
