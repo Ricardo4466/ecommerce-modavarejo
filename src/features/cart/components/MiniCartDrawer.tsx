@@ -61,6 +61,7 @@ export function MiniCartDrawer() {
       >
         <div
           className={cn(
+            'mini-cart-panel',
             'flex max-h-[min(92vh,720px)] w-full shrink-0 flex-col overflow-hidden md:min-h-0',
             'rounded-t-3xl border border-border border-b-0 bg-card shadow-2xl',
             /* Desktop: coluna à direita, do fim do header até o rodapé da viewport (altura “cheia” útil). */

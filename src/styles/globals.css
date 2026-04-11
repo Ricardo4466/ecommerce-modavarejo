@@ -17,6 +17,47 @@ dialog.mini-cart-dialog[open] {
   padding: 0;
 }
 
+/* Abertura do mini-carrinho: bottom sheet (mobile) / gaveta à direita (desktop) */
+@keyframes mini-cart-enter-mobile {
+  from {
+    opacity: 0.96;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mini-cart-enter-desktop {
+  from {
+    opacity: 0.96;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+dialog.mini-cart-dialog[open] .mini-cart-panel {
+  animation: mini-cart-enter-mobile 0.4s var(--ease-premium, cubic-bezier(0.33, 1, 0.68, 1)) both;
+}
+
+@media (min-width: 768px) {
+  dialog.mini-cart-dialog[open] .mini-cart-panel {
+    animation-name: mini-cart-enter-desktop;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog.mini-cart-dialog[open] .mini-cart-panel {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* Skip link — visível apenas no foco (teclado / leitor) */
 .skip-to-content {
   position: absolute;
