@@ -2,7 +2,9 @@
 
 Repositório e pasta raiz: **`ecommerce-modavarejo`** (igual ao nome no `package.json`).
 
-**Demo (Vercel):** https://ecommerce-modavarejo.vercel.app
+**Demo (Vercel — front):** https://ecommerce-modavarejo.vercel.app
+
+O catálogo em produção pode ser servido por uma **API hospedada à parte** (ex.: Railway). Configure **`VITE_API_URL`** no projeto da Vercel com a **origem** da API (ex.: `https://seu-servico.up.railway.app`), **sem** barra no fim. O build do Vite embute esse valor no cliente; o **`middleware.ts`** na raiz também usa `VITE_API_URL` no edge para buscar HTML de preview (ver secção **SEO e previews sociais** abaixo).
 
 Na Vercel, rotas do React Router (ex.: `/favoritos`, `/produto/...`) precisam de **rewrite** para `index.html`; o arquivo [`vercel.json`](vercel.json) na raiz faz isso. Sem ele, abrir essas URLs diretamente no navegador retorna 404; navegar pelos links internos continua funcionando.
 
@@ -60,14 +62,34 @@ Rotas centralizadas em [`src/lib/routes.ts`](src/lib/routes.ts) para evitar stri
 - **Framer Motion** concentrado em transições de layout e microinterações já existentes; não há dependência de motion para regras de negócio. **`prefers-reduced-motion`**: transições de página (layout) e bloco principal da PDP ficam instantâneas quando o usuário pede menos movimento.
 - **Desacoplamento**: `ProductCard` (`src/components`) aceita `topAction` opcional; o botão de favorito vive em `features/products` e é injetado pelo grid, evitando dependência circular entre camadas.
 - **PLP e query string**: [`useProductListingUrlSync`](src/features/products/hooks/useProductListingUrlSync.ts) mantém filtros alinhados à URL (`category`, `brand`, `sort`, `condition`, `q`). O campo **Buscar** na toolbar usa **debounce** (~300 ms) antes de atualizar a store e a URL, reduzindo requisições. Se a página abre **com** parâmetros válidos, eles prevalecem sobre o que estiver no `localStorage` após a reidratação do Zustand. Voltar o histórico para `/` sem query restaura filtros “limpos”.
-- **SEO básico na PDP**: [`useProductDetailSeo`](src/features/products/hooks/useProductDetailSeo.ts) atualiza `document.title` e a meta `description` enquanto o produto está em foco; ao sair da página, os valores são restaurados.
+- **SEO na PDP (cliente)**: [`useProductDetailSeo`](src/features/products/hooks/useProductDetailSeo.ts) injeta metas Open Graph e Twitter, `canonical`, JSON-LD `Product` e restaura título/descrição ao sair. Isso vale para quem **executa JavaScript** no browser.
 - **Acessibilidade**: link **“Pular para o conteúdo”** no topo do layout aponta para `#conteudo-principal` (`main`, focável com `tabIndex={-1}`).
 - **Backend**: Express em [`server/src/index.ts`](server/src/index.ts); CORS liberado para dev. O front chama caminhos relativos `/api/...` (proxy Vite) ou, em produção, use `VITE_API_URL` com a origem da API.
 - **Detalhe por id**: `GET /api/product/:id` para carrinho e checkout (evita ambiguidade com slugs numéricos em `GET /api/products/:slug`).
 - **PDP e conversão (Tech Challenge 2026)**: galeria com zoom na área principal (desktop), painel ampliado ao lado, modal em tela cheia com navegação; abas **Descrição / Especificações / Trocas e devoluções**; preço “De” opcional (`compareAtPriceCents`) com selo **Economize R$ …**; reforço de escassez (“Últimas unidades”); **produtos relacionados** na mesma categoria (`GET /api/products/:slug/related`); breadcrumbs com link de volta à PLP filtrada por categoria.
 - **Mini-carrinho**: ao **adicionar** um item, abre-se automaticamente uma gaveta (`<dialog>`): resumo das linhas, subtotal e atalhos para o carrinho e o checkout — o badge no header continua como atalho rápido.
 - **Privacidade (cookies)**: banner com consentimento armazenado em `localStorage` (`ecommerce-modavarejo:cookie-consent`).
-- **Docker**: [`Dockerfile.api`](Dockerfile.api) (API Node + `tsx`), [`Dockerfile.web`](Dockerfile.web) (build Vite + **nginx**), [`docker-compose.yml`](docker-compose.yml) e [`docker/nginx.conf`](docker/nginx.conf) (SPA + proxy de `/api` para o serviço `api`). Subir tudo: `docker compose up --build` e abrir `http://localhost:8080` (API exposta em `3031`).
+- **Docker**: [`Dockerfile.api`](Dockerfile.api) (API Node + `tsx`), [`Dockerfile.web`](Dockerfile.web) (build Vite + **nginx**), [`docker-compose.yml`](docker-compose.yml) e [`docker/nginx.conf`](docker/nginx.conf) (SPA + proxy de `/api` para o serviço `api`). O nginx identifica **User-Agents** de redes sociais em `/produto/:slug` e devolve HTML com Open Graph gerado pela API (mesma ideia do middleware da Vercel). Subir tudo: `docker compose up --build` e abrir `http://localhost:8080` (API também mapeada em `http://localhost:3031`).
+
+---
+
+## SEO e previews sociais (WhatsApp, Open Graph)
+
+Crawlers (WhatsApp, Facebook, etc.) **não executam** o React; só veem o **primeiro HTML**. Por isso existem **dois** caminhos:
+
+1. **No browser**, após o JS carregar, [`useProductDetailSeo`](src/features/products/hooks/useProductDetailSeo.ts) preenche título, descrição, OG, Twitter e JSON-LD na PDP.
+2. **Para crawlers**, a API expõe **`GET /internal/social-pdp/:slug`**, que devolve uma página HTML mínima só com metas (`og:title`, `og:image`, …) e dados do produto.
+   - **Vercel:** [`middleware.ts`](middleware.ts) na raiz detecta User-Agent social em `/produto/:slug`, chama a API com `X-Forwarded-Host` / `X-Forwarded-Proto` e devolve esse HTML. Exige **`VITE_API_URL`** configurado no projeto da Vercel.
+   - **Docker (nginx):** regra equivalente em [`docker/nginx.conf`](docker/nginx.conf) encaminha para a mesma rota interna da API.
+
+**Variáveis úteis**
+
+| Onde | Variável | Uso |
+|------|----------|-----|
+| Build do front (Vercel, `.env` local) | `VITE_API_URL` | Origem da API para `fetch` no cliente e para o middleware na Vercel. |
+| API (Docker Compose) | `PUBLIC_SITE_URL` | Opcional; canonical e `og:url` nas respostas HTML se o `Host` do proxy não refletir o domínio público. |
+
+**Testar:** com User-Agent de rede social, a resposta de `/produto/<slug>` deve conter `og:image`. O [Sharing Debugger](https://developers.facebook.com/tools/debug/) da Meta ajuda a **invalidar cache** de preview; o WhatsApp pode atrasar atualização em relação ao `curl`.
 
 ---
 
@@ -79,6 +101,7 @@ O PDF do desafio cita como **opcional** uma breve descrição ou diagrama de bac
 |--------|---------|----------------|
 | `GET` | `/api/products` | `category`, `brand` (slug), `sort` (`name-asc`, `name-desc`, `price-asc`, `price-desc`), opcional `condition` (`novo`, `usado`, `excelente`), opcional `q` (busca em nome/descrição). Resposta: `{ "items": Product[] }`. |
 | `GET` | `/api/products/:slug` | Retorna um `Product` ou `404`. |
+| `GET` | `/internal/social-pdp/:slug` | Resposta **`text/html`** com metas Open Graph / Twitter para crawlers (WhatsApp, etc.). Não é JSON; usada pelo nginx Docker e pelo fluxo de preview na Vercel. |
 | `GET` | `/api/products/:slug/related` | `limit` (1–12, padrão 4). Produtos da mesma `category`, excluindo o slug. Resposta: `{ "items": Product[] }`. |
 | `GET` | `/api/product/:id` | Retorna um `Product` por `id` ou `404`. |
 | `POST` | `/api/orders` | Corpo: `{ "lines": [{ "productId", "quantity" }], "delivery": { "cep", "city", "address" }, "paymentMethod": "card" \| "pix" \| "boleto" }`. Valida endereço (CEP 8 dígitos **ou** cidade + endereço). Resposta `201`: pedido com `id`, `subtotalCents`, linhas com preços do catálogo. |
@@ -156,6 +179,8 @@ cross-env VITE_API_PROXY_TARGET=http://127.0.0.1:3031 npm run dev
 ```
 
 Abra o endereço exibido pelo Vite no terminal.
+
+**Produção (front + API separados):** crie um arquivo `.env.production` ou configure as variáveis no painel da Vercel: `VITE_API_URL=https://origem-da-sua-api`. Sem isso, o front em produção não encontra `/api` (não há proxy do Vite). Após alterar `VITE_*`, é necessário **novo build**.
 
 Outros scripts:
 
