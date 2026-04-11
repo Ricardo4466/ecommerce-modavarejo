@@ -18,8 +18,24 @@ import {
   replaceProduct,
 } from './products-store.js'
 import { createOrder, getOrder } from './orders-store.js'
+import { buildSocialPdpHtml } from './social-pdp-html.js'
 
 const PORT = Number(process.env.PORT) || 3001
+
+function publicOrigin(req: express.Request): string {
+  const rawProto = req.get('x-forwarded-proto') || req.protocol || 'https'
+  const proto = rawProto.split(',')[0]?.trim() || 'https'
+  const rawHost = req.get('x-forwarded-host') || req.get('host') || 'localhost'
+  const host = rawHost.split(',')[0]?.trim() || 'localhost'
+  return `${proto}://${host}`
+}
+
+function absoluteAssetUrl(origin: string, url: string): string {
+  const t = url.trim()
+  if (t.startsWith('http://') || t.startsWith('https://')) return t
+  const path = t.startsWith('/') ? t : `/${t}`
+  return `${origin}${path}`
+}
 
 const app = express()
 
@@ -291,6 +307,28 @@ app.get('/api/products/:slug', (req, res) => {
     return
   }
   res.json(found)
+})
+
+/** HTML com Open Graph para crawlers (WhatsApp, Facebook, etc.) — sem JS. */
+app.get('/internal/social-pdp/:slug', (req, res) => {
+  const found = findBySlug(req.params.slug)
+  if (!found) {
+    res.status(404).type('text/plain').send('Not found')
+    return
+  }
+  const envBase = process.env.PUBLIC_SITE_URL?.replace(/\/$/, '')
+  const origin = envBase || publicOrigin(req)
+  const path = `/produto/${found.slug}`
+  const canonicalUrl = `${origin}${path}`
+  const gallery =
+    found.galleryUrls && found.galleryUrls.length > 0 ? found.galleryUrls : [found.imageUrl]
+  const imageUrls = gallery
+    .filter((u) => typeof u === 'string' && u.trim().length > 0)
+    .map((u) => absoluteAssetUrl(origin, u))
+  const primaryImageUrl = imageUrls[0] ?? absoluteAssetUrl(origin, found.imageUrl)
+  const html = buildSocialPdpHtml(found, { canonicalUrl, primaryImageUrl })
+  res.set('Cache-Control', 'public, max-age=300')
+  res.type('html').send(html)
 })
 
 type OrderBody = {
