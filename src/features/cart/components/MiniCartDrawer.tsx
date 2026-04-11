@@ -46,6 +46,7 @@ export function MiniCartDrawer() {
         'border-0 bg-transparent p-0 text-foreground shadow-none',
         /* Sem escurecimento atrás do carrinho (backdrop do dialog). */
         'backdrop:bg-transparent open:flex open:flex-col',
+        'overflow-x-clip',
       )}
       aria-labelledby="mini-cart-title"
       aria-modal="true"
@@ -56,7 +57,7 @@ export function MiniCartDrawer() {
         shrink-wrap do <dialog> (globals: dialog.mini-cart-dialog[open] em viewport cheia).
       */}
       <div
-        className="relative flex h-full min-h-0 w-full flex-1 cursor-pointer flex-col justify-end bg-transparent md:block md:h-full md:min-h-full"
+        className="relative flex h-full min-h-0 w-full min-w-0 flex-1 cursor-pointer flex-col justify-end overflow-x-clip bg-transparent md:block md:h-full md:min-h-full"
         onClick={() => ref.current?.close()}
       >
         <div

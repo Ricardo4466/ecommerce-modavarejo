@@ -7,41 +7,49 @@
  * max-width ~calc(100%-2em). A caixa encolhe à largura do painel e o painel fica à esquerda.
  * Overlay em viewport cheia; o painel ancora à direita no componente (absolute + right:0).
  */
+/*
+ * overflow: evita scroll horizontal no documento durante translateX/100vw.
+ * Evitar width:100vw — com barra de rolagem vertical o vw inclui a barra e pode “empurrar” o layout.
+ */
 dialog.mini-cart-dialog[open] {
   box-sizing: border-box;
-  width: 100vw;
-  max-width: none;
+  inset: 0;
+  width: auto;
+  max-width: 100%;
+  min-width: 0;
   height: 100vh;
   height: 100dvh;
   margin: 0;
   padding: 0;
+  overflow: hidden;
+  overflow-x: clip;
 }
 
-/* Abertura do mini-carrinho: bottom sheet (mobile) / gaveta à direita (desktop) */
+/* Abertura do mini-carrinho: bottom sheet (mobile) / deslize suave da direita (desktop, sem 100% → sem overflow-x) */
 @keyframes mini-cart-enter-mobile {
   from {
-    opacity: 0.96;
-    transform: translateY(100%);
+    opacity: 0;
+    transform: translate3d(0, 100%, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes mini-cart-enter-desktop {
   from {
-    opacity: 0.96;
-    transform: translateX(100%);
+    opacity: 0;
+    transform: translate3d(1.75rem, 0, 0);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 dialog.mini-cart-dialog[open] .mini-cart-panel {
-  animation: mini-cart-enter-mobile 0.4s var(--ease-premium, cubic-bezier(0.33, 1, 0.68, 1)) both;
+  animation: mini-cart-enter-mobile 0.52s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @media (min-width: 768px) {
@@ -379,6 +387,7 @@ dialog.mini-cart-dialog[open] .mini-cart-panel {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
     scroll-padding-top: calc(var(--header-height) + 0.75rem);
+    overflow-x: hidden;
   }
 
   @media (max-width: 767.98px) {
@@ -561,11 +570,13 @@ dialog.mini-cart-dialog[open] .mini-cart-panel {
   display: flex;
   flex-direction: column;
   width: 100%;
+  min-width: 0;
   max-width: none;
   margin: 0;
   padding-left: 0;
   padding-right: 0;
   padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  overflow-x: clip;
 }
 
 .shell__header {
