@@ -13,6 +13,9 @@ const STORAGE_KEY = 'ecommerce-modavarejo:cart'
 
 type CartState = {
   lines: CartLine[]
+  miniCartOpen: boolean
+  openMiniCart: () => void
+  closeMiniCart: () => void
   addItem: (productId: string, quantity?: number) => void
   setQuantity: (productId: string, quantity: number) => void
   removeItem: (productId: string) => void
@@ -62,8 +65,14 @@ export const useCartStore = create<CartState>()(
   persist(
     (set) => ({
       lines: [],
+      miniCartOpen: false,
+      openMiniCart: () => set({ miniCartOpen: true }),
+      closeMiniCart: () => set({ miniCartOpen: false }),
       addItem: (productId, quantity = 1) =>
-        set((s) => ({ lines: addOrIncrement(s.lines, productId, quantity) })),
+        set((s) => ({
+          lines: addOrIncrement(s.lines, productId, quantity),
+          miniCartOpen: true,
+        })),
       setQuantity: (productId, quantity) =>
         set((s) => ({ lines: updateQuantity(s.lines, productId, quantity) })),
       removeItem: (productId) =>

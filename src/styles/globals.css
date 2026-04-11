@@ -2,6 +2,21 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * Mini carrinho (<dialog> + showModal): estilos de UA costumam usar width: fit-content /
+ * max-width ~calc(100%-2em). A caixa encolhe à largura do painel e o painel fica à esquerda.
+ * Overlay em viewport cheia; o painel ancora à direita no componente (absolute + right:0).
+ */
+dialog.mini-cart-dialog[open] {
+  box-sizing: border-box;
+  width: 100vw;
+  max-width: none;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+}
+
 /* Skip link — visível apenas no foco (teclado / leitor) */
 .skip-to-content {
   position: absolute;

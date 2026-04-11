@@ -12,6 +12,7 @@ import {
   PRODUCT_CONDITION_BADGE_CARD,
   hasProductPhotoUrl,
   productCardStockRibbon,
+  productSavingsCents,
 } from '@/features/products/lib/product-display'
 import { ProductPhotoPlaceholder } from '@/features/products/components/ProductPhotoPlaceholder'
 
@@ -40,6 +41,7 @@ export function ProductCard({
   preview = false,
 }: ProductCardProps) {
   const stockRibbon = productCardStockRibbon(product.stock)
+  const savings = productSavingsCents(product)
 
   const cardMain = (
     <>
@@ -135,6 +137,11 @@ export function ProductCard({
               </span>
             </p>
           ) : null}
+          {savings != null && product.stock > 0 ? (
+            <p className="text-[0.7rem] font-semibold text-success">
+              Economize {formatCurrencyFromCents(savings)}
+            </p>
+          ) : null}
         </div>
       </div>
     </>
@@ -166,7 +173,10 @@ export function ProductCard({
           {cardMain}
         </div>
       ) : (
-        <Link to={ROUTES.product(product.slug)} className={linkShellClass}>
+        <Link
+          to={ROUTES.product(product.slug)}
+          className={cn(linkShellClass, 'cursor-pointer')}
+        >
           {cardMain}
         </Link>
       )}

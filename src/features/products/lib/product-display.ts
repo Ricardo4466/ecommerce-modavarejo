@@ -1,4 +1,4 @@
-import type { ProductCondition } from '@/types'
+import type { Product, ProductCondition } from '@/types'
 
 /** Pílula de condição comercial — cartão de produto (PLP / favoritos). */
 export const PRODUCT_CONDITION_BADGE_CARD: Record<ProductCondition, string> = {
@@ -66,4 +66,11 @@ export function productDetailStockPill(stock: number): ProductDetailStockPill {
 /** Indica se há URL de foto principal utilizável (evita `<img src="">`). */
 export function hasProductPhotoUrl(url: string | undefined | null): boolean {
   return typeof url === 'string' && url.trim().length > 0
+}
+
+/** Diferença em centavos entre preço “De” e preço atual; null se não houver promoção válida. */
+export function productSavingsCents(product: Product): number | null {
+  const ref = product.compareAtPriceCents
+  if (ref == null || ref <= product.priceCents) return null
+  return ref - product.priceCents
 }

@@ -49,4 +49,11 @@ export const productService = {
       throw e
     }
   },
+
+  async getRelatedBySlug(slug: string, limit = 4): Promise<Product[]> {
+    const { items } = await httpGet<{ items: Product[] }>(
+      `/api/products/${encodeURIComponent(slug)}/related?limit=${limit}`,
+    )
+    return items
+  },
 }

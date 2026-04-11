@@ -27,7 +27,9 @@ type FormState = {
   name: string
   slug: string
   description: string
+  longDescription: string
   priceInput: string
+  compareAtPriceInput: string
   category: ProductCategory
   condition: ProductCondition
   brand: string
@@ -44,7 +46,9 @@ function emptyForm(): FormState {
     name: '',
     slug: '',
     description: '',
+    longDescription: '',
     priceInput: '',
+    compareAtPriceInput: '',
     category: 'masculino',
     condition: 'novo',
     brand: '',
@@ -59,6 +63,9 @@ function emptyForm(): FormState {
 
 function formToPreviewProduct(form: FormState, previewId?: string): Product {
   const priceCents = brlInputToCents(form.priceInput)
+  const compareRaw = form.compareAtPriceInput.trim()
+  const compareAtPriceCents =
+    compareRaw.length > 0 ? brlInputToCents(compareRaw) : undefined
   const slug =
     form.slug.trim() || (form.name.trim() ? slugify(form.name) : 'preview')
   const brandSlug = slugify(form.brand.trim()) || 'marca'
@@ -76,7 +83,15 @@ function formToPreviewProduct(form: FormState, previewId?: string): Product {
     slug,
     name: form.name.trim() || 'Nome do produto',
     description: form.description.trim(),
+    ...(form.longDescription.trim()
+      ? { longDescription: form.longDescription.trim() }
+      : {}),
     priceCents: Number.isFinite(priceCents) ? priceCents : 0,
+    ...(compareAtPriceCents != null &&
+    Number.isFinite(compareAtPriceCents) &&
+    compareAtPriceCents > 0
+      ? { compareAtPriceCents }
+      : {}),
     category: form.category,
     condition: form.condition,
     brand: form.brand.trim() || 'Marca',
@@ -95,7 +110,10 @@ function productToForm(p: Product): FormState {
     name: p.name,
     slug: p.slug,
     description: p.description,
+    longDescription: p.longDescription ?? '',
     priceInput: centsToBrlInput(p.priceCents),
+    compareAtPriceInput:
+      p.compareAtPriceCents != null ? centsToBrlInput(p.compareAtPriceCents) : '',
     category: p.category,
     condition: p.condition,
     brand: p.brand,
@@ -197,10 +215,22 @@ function AdminProductForm({ mode, productId }: AdminProductFormProps) {
       .map((s) => s.trim())
       .filter(Boolean)
 
+    const compareAtRaw = form.compareAtPriceInput.trim()
+    const compareAtPriceCents =
+      compareAtRaw.length > 0 ? brlInputToCents(compareAtRaw) : undefined
+
     const payload = {
       name: form.name.trim(),
       description: form.description.trim(),
+      ...(form.longDescription.trim()
+        ? { longDescription: form.longDescription.trim() }
+        : {}),
       priceCents,
+      ...(compareAtPriceCents != null &&
+      Number.isFinite(compareAtPriceCents) &&
+      compareAtPriceCents > 0
+        ? { compareAtPriceCents }
+        : {}),
       category: form.category,
       condition: form.condition,
       brand: form.brand.trim(),
@@ -298,7 +328,21 @@ function AdminProductForm({ mode, productId }: AdminProductFormProps) {
           />
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-1.5 min-w-0">
+          <label htmlFor="admin-long-desc" className="text-xs font-medium text-muted-foreground">
+            Descrição detalhada (opcional)
+          </label>
+          <textarea
+            id="admin-long-desc"
+            className={textareaClass}
+            value={form.longDescription}
+            onChange={(e) => setForm((f) => ({ ...f, longDescription: e.target.value }))}
+            rows={6}
+            placeholder="Texto longo para a PDP e SEO…"
+          />
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Input
             label="Preço (R$)"
             required
@@ -306,6 +350,13 @@ function AdminProductForm({ mode, productId }: AdminProductFormProps) {
             placeholder="79,90"
             value={form.priceInput}
             onChange={(e) => setForm((f) => ({ ...f, priceInput: e.target.value }))}
+          />
+          <Input
+            label="Preço “De” / referência (opcional)"
+            inputMode="decimal"
+            placeholder="99,90"
+            value={form.compareAtPriceInput}
+            onChange={(e) => setForm((f) => ({ ...f, compareAtPriceInput: e.target.value }))}
           />
           <Input
             label="Estoque (unidades)"

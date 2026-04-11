@@ -16,6 +16,9 @@ export const PLP_MOCK_PRODUCTS: Product[] = [
     name: 'Camiseta básica algodão orgânico',
     description:
       'Modelagem regular, gola careca e toque macio. Ideal para o dia a dia com calça jeans ou bermuda.',
+    longDescription:
+      'Peça essencial do guarda-roupa com modelagem regular e acabamento reforçado nas mangas. O algodão orgânico oferece respirabilidade e toque macio em qualquer estação. Combine com calça jeans para um visual casual ou com alfaiataria leve para ambientes de trabalho com dress code flexível. Lavagem à máquina em ciclo delicado; secar à sombra para preservar a cor.',
+    compareAtPriceCents: 99_900,
     priceCents: 79_900,
     category: 'masculino',
     condition: 'novo',
@@ -43,6 +46,9 @@ export const PLP_MOCK_PRODUCTS: Product[] = [
     name: 'Calça chino slim',
     description:
       'Corte slim discreto, bolsos laterais e passadores largos. Peça usada com sinais leves de uso.',
+    longDescription:
+      'Chino com caimento slim que valoriza a silhueta sem apertar demais. Bolsos frontais e traseiros funcionais, passadores compatíveis com cintos até 4 cm. Indicada para composições smart casual. Peça de segunda mão: pequenas marcas de uso nas costuras são esperadas e descritas com transparência.',
+    compareAtPriceCents: 189_900,
     priceCents: 149_900,
     category: 'masculino',
     condition: 'usado',
@@ -97,6 +103,9 @@ export const PLP_MOCK_PRODUCTS: Product[] = [
     name: 'Vestido midi floral',
     description:
       'Decote V e cintura marcada com amarração lateral. Tecido leve para eventos e brunch.',
+    longDescription:
+      'Vestido midi com estampa floral em tons suaves, forro interno para conforto e opacidade. O decote em V alonga o pescoço e a amarração lateral permite ajuste fino na cintura. Comprimento abaixo do joelho — ideal para eventos diurnos, jantares e ocasiões semi-formais. Fechamento posterior com zíper invisível.',
+    compareAtPriceCents: 279_900,
     priceCents: 219_900,
     category: 'feminino',
     condition: 'novo',
@@ -201,6 +210,9 @@ export const PLP_MOCK_PRODUCTS: Product[] = [
     name: 'Bolsa tote couro caramelo',
     description:
       'Alças reforçadas e divisão interna com zíper. Pouco uso, couro com pátina uniforme.',
+    longDescription:
+      'Tote em couro legítimo na tonalidade caramelo, com alças duplas reforçadas para uso diário. Interior com bolso com zíper e divisórias para organização. Pátina natural do couro confere caráter único à peça. Dimensões generosas para notebook de até 13", agenda e itens pessoais. Estado excelente: ferragens sem oxidação visível.',
+    compareAtPriceCents: 449_900,
     priceCents: 389_900,
     category: 'acessorios',
     condition: 'excelente',

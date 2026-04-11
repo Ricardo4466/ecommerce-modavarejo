@@ -64,6 +64,10 @@ Rotas centralizadas em [`src/lib/routes.ts`](src/lib/routes.ts) para evitar stri
 - **Acessibilidade**: link **“Pular para o conteúdo”** no topo do layout aponta para `#conteudo-principal` (`main`, focável com `tabIndex={-1}`).
 - **Backend**: Express em [`server/src/index.ts`](server/src/index.ts); CORS liberado para dev. O front chama caminhos relativos `/api/...` (proxy Vite) ou, em produção, use `VITE_API_URL` com a origem da API.
 - **Detalhe por id**: `GET /api/product/:id` para carrinho e checkout (evita ambiguidade com slugs numéricos em `GET /api/products/:slug`).
+- **PDP e conversão (Tech Challenge 2026)**: galeria com zoom na área principal (desktop), painel ampliado ao lado, modal em tela cheia com navegação; abas **Descrição / Especificações / Trocas e devoluções**; preço “De” opcional (`compareAtPriceCents`) com selo **Economize R$ …**; reforço de escassez (“Últimas unidades”); **produtos relacionados** na mesma categoria (`GET /api/products/:slug/related`); breadcrumbs com link de volta à PLP filtrada por categoria.
+- **Mini-carrinho**: ao **adicionar** um item, abre-se automaticamente uma gaveta (`<dialog>`): resumo das linhas, subtotal e atalhos para o carrinho e o checkout — o badge no header continua como atalho rápido.
+- **Privacidade (cookies)**: banner com consentimento armazenado em `localStorage` (`ecommerce-modavarejo:cookie-consent`).
+- **Docker**: [`Dockerfile.api`](Dockerfile.api) (API Node + `tsx`), [`Dockerfile.web`](Dockerfile.web) (build Vite + **nginx**), [`docker-compose.yml`](docker-compose.yml) e [`docker/nginx.conf`](docker/nginx.conf) (SPA + proxy de `/api` para o serviço `api`). Subir tudo: `docker compose up --build` e abrir `http://localhost:8080` (API exposta em `3031`).
 
 ---
 
@@ -75,6 +79,7 @@ O PDF do desafio cita como **opcional** uma breve descrição ou diagrama de bac
 |--------|---------|----------------|
 | `GET` | `/api/products` | `category`, `brand` (slug), `sort` (`name-asc`, `name-desc`, `price-asc`, `price-desc`), opcional `condition` (`novo`, `usado`, `excelente`), opcional `q` (busca em nome/descrição). Resposta: `{ "items": Product[] }`. |
 | `GET` | `/api/products/:slug` | Retorna um `Product` ou `404`. |
+| `GET` | `/api/products/:slug/related` | `limit` (1–12, padrão 4). Produtos da mesma `category`, excluindo o slug. Resposta: `{ "items": Product[] }`. |
 | `GET` | `/api/product/:id` | Retorna um `Product` por `id` ou `404`. |
 | `POST` | `/api/orders` | Corpo: `{ "lines": [{ "productId", "quantity" }], "delivery": { "cep", "city", "address" }, "paymentMethod": "card" \| "pix" \| "boleto" }`. Valida endereço (CEP 8 dígitos **ou** cidade + endereço). Resposta `201`: pedido com `id`, `subtotalCents`, linhas com preços do catálogo. |
 | `GET` | `/api/orders/:id` | Retorna o pedido ou `404`. Pedidos ficam em **memória** na API (reinício apaga o histórico). |
@@ -132,6 +137,15 @@ npm run dev:full
 
 - Vite: `http://localhost:5173` (proxy `/api` → `http://127.0.0.1:3031`).
 - API: `http://localhost:3031` nesse fluxo.
+
+**Docker (reprodutibilidade):** na raiz, com Docker instalado:
+
+```bash
+docker compose up --build
+```
+
+- Front: `http://localhost:8080` (nginx serve o `dist` e encaminha `/api` ao container da API).
+- API: `http://localhost:3031` (também acessível na rede interna do Compose como hostname `api`).
 
 **Só a API** (`npm run dev:api`) continua na **3001** por padrão. Se aparecer `EADDRINUSE`, outro programa (ou uma API antiga) está usando essa porta: encerre esse processo **ou** suba em outra porta e alinhe o proxy, por exemplo:
 

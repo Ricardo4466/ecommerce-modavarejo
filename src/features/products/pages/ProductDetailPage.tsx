@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 
 import { formatCurrencyFromCents } from '@/lib/formatCurrency'
 import { cn } from '@/lib/cn'
-import { ROUTES } from '@/lib/routes'
+import { buildProductListingHref, ROUTES } from '@/lib/routes'
 import { Breadcrumb, Button, StarRating } from '@/ui'
 import { useCart } from '@/features/cart/hooks/useCart'
 import { FavoriteButton } from '@/features/products/components/FavoriteButton'
@@ -12,12 +12,14 @@ import { ProductDetailBackButton } from '@/features/products/components/ProductD
 import { ProductImageGallery } from '@/features/products/components/ProductImageGallery'
 import { ProductDetailLoadError } from '@/features/products/components/ProductDetailLoadError'
 import { ProductDetailSkeleton } from '@/features/products/components/ProductDetailSkeleton'
-import { ProductSpecifications } from '@/features/products/components/ProductSpecifications'
+import { ProductDetailTabs } from '@/features/products/components/ProductDetailTabs'
+import { ProductRelatedSection } from '@/features/products/components/ProductRelatedSection'
 import { useProduct } from '@/features/products/hooks/useProduct'
 import { useProductDetailSeo } from '@/features/products/hooks/useProductDetailSeo'
 import {
   PRODUCT_CONDITION_BADGE_PDP,
   productDetailStockPill,
+  productSavingsCents,
 } from '@/features/products/lib/product-display'
 import {
   commercialConditionLabel,
@@ -46,6 +48,9 @@ export function ProductDetailPage() {
   ).filter((u): u is string => typeof u === 'string' && u.trim().length > 0)
 
   const stock = productDetailStockPill(data.stock)
+  const savings = productSavingsCents(data)
+  const showCompare =
+    data.compareAtPriceCents != null && data.compareAtPriceCents > data.priceCents
 
   return (
     <div className="mx-auto w-full max-w-6xl pb-12 pt-6 md:pb-16 md:pt-8">
@@ -54,22 +59,27 @@ export function ProductDetailPage() {
         <Breadcrumb
           items={[
             { label: 'Início', href: ROUTES.home },
-            { label: 'Produtos', href: ROUTES.home },
+            {
+              label: productCategoryLabel(data.category),
+              href: buildProductListingHref({ category: data.category }),
+            },
             { label: data.name },
           ]}
         />
       </div>
 
       <div className="grid gap-10 lg:grid-cols-2 lg:gap-14 lg:items-start">
-        <ProductImageGallery
-          key={data.slug}
-          className="lg:sticky lg:top-[calc(var(--header-height)+0.75rem)]"
-          productName={data.name}
-          urls={images}
-        />
+        <div className="relative z-10 min-w-0 overflow-visible">
+          <ProductImageGallery
+            key={data.slug}
+            className="overflow-visible lg:sticky lg:top-[calc(var(--header-height)+0.75rem)]"
+            productName={data.name}
+            urls={images}
+          />
+        </div>
 
         <motion.div
-          className="flex flex-col gap-6"
+          className="relative z-0 flex flex-col gap-6"
           initial={prefersReducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={prefersReducedMotion ? { duration: 0 } : springSoft}
@@ -101,19 +111,26 @@ export function ProductDetailPage() {
                 <FavoriteButton productId={data.id} />
               </div>
             </div>
-            <p
-              className={cn(
-                'inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold',
-                stock.className,
-              )}
-            >
-              {stock.text}
-              {data.stock > 0 && (
-                <span className="ml-2 font-normal opacity-80">
-                  · {data.stock} disponíveis
+            <div className="flex flex-wrap items-center gap-2">
+              <p
+                className={cn(
+                  'inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold',
+                  stock.className,
+                )}
+              >
+                {stock.text}
+                {data.stock > 0 && (
+                  <span className="ml-2 font-normal opacity-80">
+                    · {data.stock} disponíveis
+                  </span>
+                )}
+              </p>
+              {data.stock > 0 && data.stock < 5 ? (
+                <span className="inline-flex items-center rounded-full border border-warning/40 bg-warning/15 px-3 py-1 text-xs font-bold uppercase tracking-wide text-foreground">
+                  Últimas unidades
                 </span>
-              )}
-            </p>
+              ) : null}
+            </div>
           </div>
 
           <StarRating
@@ -123,20 +140,30 @@ export function ProductDetailPage() {
             className="text-warning"
           />
 
-          <div className="flex flex-wrap items-baseline gap-3 border-b border-border pb-6">
-            <p className="font-sans text-4xl font-extrabold tabular-nums tracking-tight text-primary md:text-5xl">
-              {formatCurrencyFromCents(data.priceCents)}
-            </p>
+          <div className="flex flex-col gap-3 border-b border-border pb-6">
+            <div className="flex flex-wrap items-baseline gap-3">
+              {showCompare ? (
+                <p className="text-lg font-medium tabular-nums text-muted-foreground line-through decoration-muted-foreground/60">
+                  {formatCurrencyFromCents(data.compareAtPriceCents!)}
+                </p>
+              ) : null}
+              <p className="font-sans text-4xl font-extrabold tabular-nums tracking-tight text-primary md:text-5xl">
+                {formatCurrencyFromCents(data.priceCents)}
+              </p>
+            </div>
+            {savings != null ? (
+              <p className="inline-flex w-fit rounded-full border border-success/35 bg-success/12 px-3 py-1 text-sm font-semibold text-success">
+                Economize {formatCurrencyFromCents(savings)}
+              </p>
+            ) : null}
             <span className="text-sm text-muted-foreground">à vista no Pix e cartão</span>
           </div>
-
-          <p className="text-base leading-relaxed text-text md:text-lg">{data.description}</p>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <Button
               type="button"
               size="lg"
-              className="w-full min-w-[240px] shadow-glow sm:w-auto"
+              className="w-full min-w-[240px] cursor-pointer shadow-glow sm:w-auto"
               onClick={() => addItem(data.id)}
               disabled={data.stock < 1}
             >
@@ -147,9 +174,11 @@ export function ProductDetailPage() {
             Frete e prazo calculados no checkout. Troca em até 7 dias conforme política da loja.
           </p>
 
-          <ProductSpecifications specifications={data.specifications} />
+          <ProductDetailTabs product={data} />
         </motion.div>
       </div>
+
+      <ProductRelatedSection current={data} />
     </div>
   )
 }

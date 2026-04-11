@@ -30,7 +30,7 @@ export type SelectProps = Omit<
 }
 
 const triggerBase =
-  'group flex w-full min-h-11 items-center justify-between gap-2 rounded-xl border border-border bg-surface px-3 py-2 text-left text-sm font-normal text-text-h shadow-xs transition-[color,background-color,border-color,box-shadow] duration-500 [transition-timing-function:cubic-bezier(0.33,1,0.68,1)] hover:border-primary/20 hover:bg-muted/25 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-muted/15'
+  'group flex w-full min-h-11 cursor-pointer items-center justify-between gap-2 rounded-xl border border-border bg-surface px-3 py-2 text-left text-sm font-normal text-text-h shadow-xs transition-[color,background-color,border-color,box-shadow] duration-500 [transition-timing-function:cubic-bezier(0.33,1,0.68,1)] hover:border-primary/20 hover:bg-muted/25 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-muted/15'
 
 const listboxPanel =
   'absolute left-0 right-0 top-[calc(100%+0.375rem)] z-[100] max-h-60 overflow-y-auto overflow-x-hidden rounded-xl border border-border/90 bg-surface py-1.5 shadow-[0_12px_40px_-12px_rgba(15,15,15,0.18)] dark:border-border dark:shadow-[0_16px_48px_-12px_rgba(0,0,0,0.55)]'

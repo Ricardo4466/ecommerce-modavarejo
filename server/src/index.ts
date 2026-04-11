@@ -56,6 +56,19 @@ function parseSpecs(raw: unknown): ProductSpecification[] {
     }))
 }
 
+function parseOptionalLongDescription(raw: unknown): string | undefined {
+  if (raw == null) return undefined
+  const s = String(raw).trim()
+  return s.length > 0 ? s : undefined
+}
+
+function parseOptionalCompareAtPriceCents(raw: unknown): number | undefined {
+  if (raw == null || raw === '') return undefined
+  const n = Math.round(Number(raw))
+  if (!Number.isFinite(n) || n < 0) return undefined
+  return n
+}
+
 function parseGallery(raw: unknown): string[] | undefined {
   if (raw == null) return undefined
   if (Array.isArray(raw)) {
@@ -92,10 +105,15 @@ function parseBodyToProductInput(body: unknown): Omit<Product, 'id' | 'slug' | '
   const rating = Math.min(5, Math.max(0, Number(b.rating)))
   const reviewCount = Math.max(0, Math.floor(Number(b.reviewCount)))
 
+  const longDescription = parseOptionalLongDescription(b.longDescription)
+  const compareAtPriceCents = parseOptionalCompareAtPriceCents(b.compareAtPriceCents)
+
   return {
     name,
     description,
+    longDescription,
     priceCents,
+    compareAtPriceCents,
     category: b.category,
     condition: b.condition,
     brand,
@@ -166,7 +184,9 @@ app.post('/api/products', (req, res) => {
     brandSlug,
     name: parsed.name,
     description: parsed.description,
+    ...(parsed.longDescription != null ? { longDescription: parsed.longDescription } : {}),
     priceCents: parsed.priceCents,
+    ...(parsed.compareAtPriceCents != null ? { compareAtPriceCents: parsed.compareAtPriceCents } : {}),
     category: parsed.category,
     condition: parsed.condition,
     brand: parsed.brand,
@@ -209,7 +229,9 @@ app.put('/api/product/:id', (req, res) => {
     brandSlug,
     name: parsed.name,
     description: parsed.description,
+    ...(parsed.longDescription != null ? { longDescription: parsed.longDescription } : {}),
     priceCents: parsed.priceCents,
+    ...(parsed.compareAtPriceCents != null ? { compareAtPriceCents: parsed.compareAtPriceCents } : {}),
     category: parsed.category,
     condition: parsed.condition,
     brand: parsed.brand,
@@ -241,6 +263,25 @@ app.get('/api/product/:id', (req, res) => {
     return
   }
   res.json(found)
+})
+
+app.get('/api/products/:slug/related', (req, res) => {
+  const { slug } = req.params
+  const rawLimit = Number(req.query.limit)
+  const limit = Number.isFinite(rawLimit) ? Math.min(12, Math.max(1, Math.floor(rawLimit))) : 4
+
+  const found = findBySlug(slug)
+  if (!found) {
+    res.status(404).json({ message: 'Produto não encontrado.' })
+    return
+  }
+
+  const items = getProducts()
+    .filter((p) => p.slug !== slug && p.category === found.category)
+    .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
+    .slice(0, limit)
+
+  res.json({ items })
 })
 
 app.get('/api/products/:slug', (req, res) => {

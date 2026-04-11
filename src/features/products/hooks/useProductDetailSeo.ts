@@ -18,7 +18,8 @@ export function useProductDetailSeo(product: Product | undefined) {
 
     document.title = `${product.name} · ${product.brand} | StyleWare`
     if (meta) {
-      meta.content = truncateMeta(product.description, 158)
+      const desc = (product.longDescription ?? product.description).replace(/\s+/g, ' ').trim()
+      meta.content = truncateMeta(desc, 158)
     }
 
     return () => {

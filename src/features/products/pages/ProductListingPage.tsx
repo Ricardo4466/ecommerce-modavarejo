@@ -5,6 +5,7 @@ import { useProductListingFilters } from '@/features/products/hooks/useProductLi
 import { useProductListingUrlSync } from '@/features/products/hooks/useProductListingUrlSync'
 import { Breadcrumb } from '@/ui'
 import { ROUTES } from '@/lib/routes'
+import { productCategoryLabel } from '@/lib/product-labels'
 
 export function ProductListingPage() {
   useProductListingUrlSync()
@@ -12,12 +13,20 @@ export function ProductListingPage() {
   const { filters, resetFilters } = useProductListingFilters()
   const { data, isLoading, error } = useProductListing(filters)
 
+  const breadcrumbItems =
+    filters.category !== ''
+      ? [
+          { label: 'Início', href: ROUTES.home },
+          { label: productCategoryLabel(filters.category) },
+        ]
+      : [
+          { label: 'Início', href: ROUTES.home },
+          { label: 'Produtos' },
+        ]
+
   return (
     <div className="page product-listing">
-      <Breadcrumb
-        className="page__breadcrumb"
-        items={[{ label: 'Início', href: ROUTES.home }, { label: 'Produtos' }]}
-      />
+      <Breadcrumb className="page__breadcrumb" items={breadcrumbItems} />
 
       <ProductListingToolbar />
 

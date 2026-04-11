@@ -20,7 +20,8 @@ test.describe('Jornada de compra (demo)', () => {
       .getByRole('button', { name: /Adicionar ao carrinho/i })
       .click()
 
-    await page.getByRole('link', { name: /Carrinho/ }).first().click()
+    await expect(page.getByRole('heading', { name: /^Carrinho$/ })).toBeVisible()
+    await page.getByRole('link', { name: /^Ver carrinho$/i }).click()
 
     await expect(page).toHaveURL(/\/carrinho/)
 
@@ -43,7 +44,8 @@ test.describe('Jornada de compra (demo)', () => {
       .getByRole('button', { name: /Adicionar ao carrinho/i })
       .click()
 
-    await page.getByRole('link', { name: /Carrinho/ }).first().click()
+    await expect(page.getByRole('heading', { name: /^Carrinho$/ })).toBeVisible()
+    await page.getByRole('link', { name: /^Ver carrinho$/i }).click()
     await expect(page).toHaveURL(/\/carrinho/)
 
     await page.getByRole('link', { name: /Ir para checkout/i }).click()

@@ -5,7 +5,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg'
 
 const easePremium = '[transition-timing-function:cubic-bezier(0.33,1,0.68,1)]'
 
-const baseStyles = `inline-flex items-center justify-center gap-2 font-medium transition-[color,background-color,border-color,transform,box-shadow] duration-500 ${easePremium} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50`
+const baseStyles = `inline-flex cursor-pointer items-center justify-center gap-2 font-medium transition-[color,background-color,border-color,transform,box-shadow] duration-500 ${easePremium} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50`
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:

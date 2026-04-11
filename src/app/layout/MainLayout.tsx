@@ -7,6 +7,9 @@ import { useFavoritesStore } from '@/features/products/stores/favorites-store'
 import { ROUTES } from '@/lib/routes'
 import { NavBadgeCount } from '@/app/layout/NavBadgeCount'
 
+import { MiniCartDrawer } from '@/features/cart/components/MiniCartDrawer'
+
+import { CookieConsentBanner } from './CookieConsentBanner'
 import { MobileNavDrawer } from './MobileNavDrawer'
 import { ThemeToggle } from './ThemeToggle'
 
@@ -29,7 +32,11 @@ export function MainLayout() {
       </a>
       <ScrollRestoration />
       {!isAdmin ? (
-        <MobileNavDrawer open={menuOpen} onClose={() => setMenuOpen(false)} />
+        <>
+          <MobileNavDrawer open={menuOpen} onClose={() => setMenuOpen(false)} />
+          <MiniCartDrawer />
+          <CookieConsentBanner />
+        </>
       ) : null}
       <div className="shell__header-mobile-group md:contents">
         <header className="shell__header">

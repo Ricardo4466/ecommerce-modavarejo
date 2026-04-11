@@ -12,7 +12,11 @@ export type Product = {
   slug: string
   name: string
   description: string
+  /** Texto longo para PDP/SEO (aba Descrição); se omitido, usa só `description`. */
+  longDescription?: string
   priceCents: number
+  /** Preço “De” / referência; se maior que `priceCents`, exibe economia na vitrine. */
+  compareAtPriceCents?: number
   category: ProductCategory
   /** Condição comercial para vitrine e filtros */
   condition: ProductCondition
