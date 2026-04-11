@@ -1,6 +1,6 @@
 import { next } from '@vercel/edge'
 
-/** Crawlers que leem o HTML sem executar JS (WhatsApp usa infraestrutura semelhante à do Facebook). */
+/** Crawlers que leem o HTML sem executar JS (evitar match genérico em "Instagram" — UA do app móvel contém essa string). */
 const SOCIAL_UA =
   /facebookexternalhit|Facebot|WhatsApp|LinkedInBot|Slackbot|Twitterbot|TelegramBot|Pinterest/i
 
