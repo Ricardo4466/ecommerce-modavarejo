@@ -5,10 +5,10 @@ import { cn } from '@/lib/cn'
 import { useThemeStore } from '@/lib/stores/theme-store'
 
 const btnIcon =
-  'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-[color,background-color,box-shadow] duration-500 [transition-timing-function:cubic-bezier(0.33,1,0.68,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background'
+  'inline-flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full transition-[color,background-color,box-shadow] duration-500 [transition-timing-function:cubic-bezier(0.33,1,0.68,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background'
 
 const btnIconMinimal =
-  'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background'
+  'inline-flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background'
 
 type ThemeToggleProps = {
   /**

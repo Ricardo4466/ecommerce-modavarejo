@@ -56,7 +56,7 @@ export function MiniCartDrawer() {
         shrink-wrap do <dialog> (globals: dialog.mini-cart-dialog[open] em viewport cheia).
       */}
       <div
-        className="relative flex h-full min-h-0 w-full flex-1 flex-col justify-end bg-transparent md:block md:h-full md:min-h-full"
+        className="relative flex h-full min-h-0 w-full flex-1 cursor-pointer flex-col justify-end bg-transparent md:block md:h-full md:min-h-full"
         onClick={() => ref.current?.close()}
       >
         <div
@@ -65,7 +65,7 @@ export function MiniCartDrawer() {
             'rounded-t-3xl border border-border border-b-0 bg-card shadow-2xl',
             /* Desktop: coluna à direita, do fim do header até o rodapé da viewport (altura “cheia” útil). */
             'md:absolute md:right-0 md:left-auto md:top-(--header-height) md:bottom-0 md:h-auto md:max-h-none',
-            'md:w-[min(32rem,100%)] md:max-w-lg md:shrink-0 md:rounded-none md:border md:border-r-0 md:border-border md:border-t md:pb-0 md:shadow-2xl',
+            'md:w-[min(32rem,100%)] md:max-w-lg md:shrink-0 md:cursor-auto md:rounded-none md:border md:border-r-0 md:border-border md:border-t md:pb-0 md:shadow-2xl',
             'pb-[max(0px,env(safe-area-inset-bottom))]',
           )}
           onClick={(e) => e.stopPropagation()}

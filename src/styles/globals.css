@@ -451,6 +451,51 @@ dialog.mini-cart-dialog[open] {
   a:hover {
     text-decoration: none;
   }
+
+  /*
+   * Cursor em elementos clicáveis — preflight / UA às vezes deixam seta em <a>/<button>.
+   */
+  a[href] {
+    cursor: pointer;
+  }
+
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  [role='button']:not([aria-disabled='true']) {
+    cursor: pointer;
+  }
+
+  [role='tab'] {
+    cursor: pointer;
+  }
+
+  summary {
+    cursor: pointer;
+  }
+
+  input[type='checkbox'],
+  input[type='radio'] {
+    cursor: pointer;
+  }
+
+  label:has(input[type='checkbox']),
+  label:has(input[type='radio']) {
+    cursor: pointer;
+  }
+
+  select:not(:disabled) {
+    cursor: pointer;
+  }
+
+  select:disabled {
+    cursor: not-allowed;
+  }
 }
 
 .muted {
@@ -777,6 +822,7 @@ a.shell__icon-btn {
 
 .shell__brand {
   -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
   display: inline-flex;
   flex-direction: column;
   gap: 0.1rem;
@@ -869,6 +915,7 @@ a.shell__icon-btn {
   font-size: 0.875rem;
   font-weight: 500;
   letter-spacing: -0.02em;
+  cursor: pointer;
   color: var(--foreground);
   background: color-mix(in oklch, var(--surface) 65%, transparent);
   border: 1px solid color-mix(in oklch, var(--border) 65%, transparent);
@@ -1145,6 +1192,7 @@ a.shell__icon-btn {
 }
 
 .shell__footer-nav a {
+  cursor: pointer;
   font-size: 0.8125rem;
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -1227,6 +1275,7 @@ a.shell__icon-btn {
   justify-content: flex-start;
   align-items: stretch;
   overflow-x: hidden;
+  cursor: pointer;
 }
 
 .mobile-drawer::backdrop {
@@ -1283,6 +1332,7 @@ a.shell__icon-btn {
   min-width: 0;
   height: 100%;
   overflow-x: hidden;
+  cursor: auto;
   background: var(--card);
   border-right: 1px solid color-mix(in oklch, var(--border) 75%, transparent);
   box-shadow: var(--shadow-2xl);
@@ -1359,6 +1409,7 @@ a.shell__icon-btn {
   letter-spacing: -0.02em;
   color: var(--foreground);
   text-decoration: none;
+  cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition:
     background-color 0.45s var(--ease-premium),

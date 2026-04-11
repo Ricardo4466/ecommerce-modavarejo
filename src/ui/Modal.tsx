@@ -56,12 +56,12 @@ export function Modal({
       aria-modal="true"
     >
       <div
-        className="flex min-h-0 flex-1 flex-col justify-end bg-transparent md:items-center md:justify-center md:p-3"
+        className="flex min-h-0 flex-1 cursor-pointer flex-col justify-end bg-transparent md:items-center md:justify-center md:p-3"
         onClick={() => ref.current?.close()}
       >
         <div
           className={cn(
-            'modal-sheet-panel flex min-h-0 w-full flex-shrink-0 flex-col overflow-hidden rounded-t-3xl border border-border border-b-0 bg-card pt-0 shadow-2xl md:w-[min(100%-1.5rem,28rem)] md:rounded-2xl md:border-b',
+            'modal-sheet-panel flex min-h-0 w-full cursor-auto flex-shrink-0 flex-col overflow-hidden rounded-t-3xl border border-border border-b-0 bg-card pt-0 shadow-2xl md:w-[min(100%-1.5rem,28rem)] md:rounded-2xl md:border-b',
             'pb-[max(0px,env(safe-area-inset-bottom))]',
           )}
           onClick={(e) => e.stopPropagation()}
