@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
+import { createOptionalLocalStorage } from '@/lib/optional-local-storage'
+
 export type ThemePreference = 'light' | 'dark' | 'system'
 
 type ThemeState = {
@@ -14,6 +16,9 @@ export const useThemeStore = create<ThemeState>()(
       preference: 'light',
       setPreference: (preference) => set({ preference }),
     }),
-    { name: 'theme-preference' },
+    {
+      name: 'theme-preference',
+      storage: createOptionalLocalStorage(),
+    },
   ),
 )

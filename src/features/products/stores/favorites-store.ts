@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
+import { createOptionalLocalStorage } from '@/lib/optional-local-storage'
+
 type FavoritesState = {
   ids: string[]
   toggle: (productId: string) => void
@@ -22,6 +24,7 @@ export const useFavoritesStore = create<FavoritesState>()(
     }),
     {
       name: 'ecommerce-modavarejo:favorites',
+      storage: createOptionalLocalStorage(),
       partialize: (s) => ({ ids: s.ids }),
     },
   ),

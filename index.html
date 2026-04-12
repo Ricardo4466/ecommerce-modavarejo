@@ -24,7 +24,9 @@
     <script>
       (function () {
         try {
-          var raw = localStorage.getItem('theme-preference')
+          var consent = localStorage.getItem('ecommerce-modavarejo:cookie-consent')
+          var raw =
+            consent === 'accepted' ? localStorage.getItem('theme-preference') : null
           var pref = 'light'
           if (raw) {
             var parsed = JSON.parse(raw)

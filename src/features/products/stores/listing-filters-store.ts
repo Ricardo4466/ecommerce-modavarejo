@@ -3,6 +3,8 @@ import { persist } from 'zustand/middleware'
 
 import type { ProductCategory, ProductCondition } from '@/types'
 
+import { createOptionalLocalStorage } from '@/lib/optional-local-storage'
+
 import type { SortOption } from '@/features/products/lib/apply-listing-filters'
 import type { ListingFiltersSnapshot } from '@/features/products/lib/listing-search-params'
 
@@ -51,6 +53,7 @@ export const useListingFiltersStore = create<ListingFiltersState>()(
     }),
     {
       name: 'ecommerce-modavarejo:plp-filters',
+      storage: createOptionalLocalStorage(),
       partialize: (s) => ({
         category: s.category,
         brandSlug: s.brandSlug,
