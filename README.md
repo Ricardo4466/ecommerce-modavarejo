@@ -8,11 +8,24 @@ O catálogo em produção pode ser servido por uma **API hospedada à parte** (e
 
 Na Vercel, rotas do React Router (ex.: `/favoritos`, `/produto/...`) precisam de **rewrite** para `index.html`; o arquivo [`vercel.json`](vercel.json) na raiz faz isso. Sem ele, abrir essas URLs diretamente no navegador retorna 404; navegar pelos links internos continua funcionando.
 
-**Apresentação (roteiro em tópicos):** [`docs/roteiro-apresentacao.md`](docs/roteiro-apresentacao.md)
+### case técnico (Moda & Varejo — processo seletivo 2026)
 
-Aplicação front-end de catálogo e carrinho alinhada ao **case técnico Moda & Varejo**: categorias **masculino**, **feminino** e **acessórios**, com **condição comercial** explícita em cada produto (**novo**, **usado**, **excelente estado**), filtros na PLP e badges na vitrine e na PDP.
+O PDF do desafio pede **jornada de compra fluida**, **UX/UI** em primeiro plano, **TypeScript** e **React** com componentes reutilizáveis, da **listagem (PLP)** ao **detalhe (PDP)**, com dados mockáveis via API REST. Escopo mínimo e como este repositório atende:
 
-Stack: **React 19**, **Vite**, **TypeScript**, **Tailwind CSS v4** e **React Router 7**. O catálogo vem de uma **API REST local** (`server/`, Express) que reutiliza o mesmo mock TypeScript do front; em desenvolvimento o Vite **proxy** encaminha `/api` para a API (padrão `http://localhost:3001` se você sobe só `dev:api`; **`npm run dev:full` usa a porta 3031** para evitar conflito com outro processo na 3001). O foco é arquitetura, estado global e UX **mobile-first**.
+| Requisito do case                                                                                               | Onde está no projeto                                                                                                           |
+| --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| **PLP** — grade de produtos                                                                                     | `/` — grid responsivo; catálogo via `GET /api/products`                                                                        |
+| **Filtros** — categoria e marca                                                                                 | Filtros por categoria, marca e **condição comercial**; busca `q`; URL + Zustand (`useProductListingUrlSync`, store de filtros) |
+| **Ordenação** — preço e nome                                                                                    | `sort`: `name-asc` / `name-desc` / `price-asc` / `price-desc`                                                                  |
+| **PDP** — visualização ampliada, **galeria**, informações técnicas completas                                    | `/produto/:slug` — galeria com zoom/abas; especificações e descrição; tipo [`Product`](src/types/product.ts)                   |
+| **Dados** — nome, marca, preço (número), condição (novo / usado / excelente), especificações, categoria, imagem | Mock + API alinhados; categorias **masculino**, **feminino**, **acessórios**; imagens via URLs estáveis no mock                |
+| **Navegação** — transições, persistência de estado básica, voltar e breadcrumbs                                 | React Router 7, `ScrollRestoration`, carrinho/favoritos/filtros persistidos, breadcrumbs e retorno à PLP filtrada              |
+| **Feedback** — skeletons ou spinners, feedback visual                                                           | Skeletons PLP/PDP (`ProductListingSkeleton`, `ProductDetailSkeleton`), estados de erro/vazio em `src/ui/`                      |
+| **Entregáveis** — código, **README** com decisões e como rodar, (opcional) backend/API                          | Este README; API REST documentada abaixo; diagrama Mermaid na secção **Arquitetura**                                           |
+
+Além do mínimo, o projeto inclui carrinho e checkout, área admin, SEO/previews sociais (WhatsApp/OG), Docker, testes (Vitest/Playwright) e CI — detalhados nas secções seguintes.
+
+**Stack:** **React 19**, **Vite 8**, **TypeScript**, **Tailwind CSS v4** e **React Router 7**. O catálogo vem de uma **API REST** (`server/`, Express) que compartilha tipos e mock com o front; em desenvolvimento o Vite **proxy** encaminha `/api` (com `npm run dev:full`, API na **3031**). Foco em arquitetura por feature, estado global e UX **mobile-first**.
 
 **Imagens do catálogo:** fotos reais de moda via [Unsplash](https://unsplash.com) (URLs estáveis no mock em [`src/features/products/mock/plp-mock.ts`](src/features/products/mock/plp-mock.ts)); atribuição às licenças dos fotógrafos conforme as regras da plataforma.
 
@@ -22,16 +35,16 @@ Stack: **React 19**, **Vite**, **TypeScript**, **Tailwind CSS v4** e **React Rou
 
 O código segue uma separação por camadas e por **feature**:
 
-| Pasta | Papel |
-|-------|--------|
-| `src/app/` | Composição da aplicação: rotas, layout, providers globais. |
-| `src/features/` | Domínio por pasta (`products`, `cart`, `checkout`, `admin`): páginas, componentes de feature, hooks e **stores** do domínio. |
-| `src/ui/` | Componentes de interface reutilizáveis (botão, breadcrumb, estados vazios/erro, etc.). |
-| `src/components/` | Composição compartilhada que não é “primitivo” de UI (ex.: `ProductCard`). |
-| `src/types/` | Tipos de domínio compartilhados (`Product`, `CartLine`, …). |
-| `src/lib/` | Utilitários, rotas centralizadas, HTTP client, formatação. |
-| `src/hooks/` | Hooks genéricos reutilizáveis. |
-| `server/` | API Express (TypeScript): catálogo, pedidos e CRUD de produtos no admin; importa mock e regras do `src/` para uma única fonte de dados. |
+| Pasta             | Papel                                                                                                                                   |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/app/`        | Composição da aplicação: rotas, layout, providers globais.                                                                              |
+| `src/features/`   | Domínio por pasta (`products`, `cart`, `checkout`, `admin`): páginas, componentes de feature, hooks e **stores** do domínio.            |
+| `src/ui/`         | Componentes de interface reutilizáveis (botão, breadcrumb, estados vazios/erro, etc.).                                                  |
+| `src/components/` | Composição compartilhada que não é “primitivo” de UI (ex.: `ProductCard`).                                                              |
+| `src/types/`      | Tipos de domínio compartilhados (`Product`, `CartLine`, …).                                                                             |
+| `src/lib/`        | Utilitários, rotas centralizadas, HTTP client, formatação.                                                                              |
+| `src/hooks/`      | Hooks genéricos reutilizáveis.                                                                                                          |
+| `server/`         | API Express (TypeScript): catálogo, pedidos e CRUD de produtos no admin; importa mock e regras do `src/` para uma única fonte de dados. |
 
 Fluxo típico na listagem de produtos (PLP):
 
@@ -84,10 +97,10 @@ Crawlers (WhatsApp, Facebook, etc.) **não executam** o React; só veem o **prim
 
 **Variáveis úteis**
 
-| Onde | Variável | Uso |
-|------|----------|-----|
-| Build do front (Vercel, `.env` local) | `VITE_API_URL` | Origem da API para `fetch` no cliente e para o middleware na Vercel. |
-| API (Docker Compose) | `PUBLIC_SITE_URL` | Opcional; canonical e `og:url` nas respostas HTML se o `Host` do proxy não refletir o domínio público. |
+| Onde                                  | Variável          | Uso                                                                                                    |
+| ------------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------ |
+| Build do front (Vercel, `.env` local) | `VITE_API_URL`    | Origem da API para `fetch` no cliente e para o middleware na Vercel.                                   |
+| API (Docker Compose)                  | `PUBLIC_SITE_URL` | Opcional; canonical e `og:url` nas respostas HTML se o `Host` do proxy não refletir o domínio público. |
 
 **Testar:** com User-Agent de rede social, a resposta de `/produto/<slug>` deve conter `og:image`. O [Sharing Debugger](https://developers.facebook.com/tools/debug/) da Meta ajuda a **invalidar cache** de preview; o WhatsApp pode atrasar atualização em relação ao `curl`.
 
@@ -97,19 +110,19 @@ Crawlers (WhatsApp, Facebook, etc.) **não executam** o React; só veem o **prim
 
 O PDF do desafio cita como **opcional** uma breve descrição ou diagrama de backend e API. A implementação abaixo corresponde ao contrato usado pelo front, alinhada ao tipo [`Product`](src/types/product.ts):
 
-| Método | Caminho | Query / notas |
-|--------|---------|----------------|
-| `GET` | `/api/products` | `category`, `brand` (slug), `sort` (`name-asc`, `name-desc`, `price-asc`, `price-desc`), opcional `condition` (`novo`, `usado`, `excelente`), opcional `q` (busca em nome/descrição). Resposta: `{ "items": Product[] }`. |
-| `GET` | `/api/products/:slug` | Retorna um `Product` ou `404`. |
-| `GET` | `/internal/social-pdp/:slug` | Resposta **`text/html`** com metas Open Graph / Twitter para crawlers (WhatsApp, etc.). Não é JSON; usada pelo nginx Docker e pelo fluxo de preview na Vercel. |
-| `GET` | `/api/products/:slug/related` | `limit` (1–12, padrão 4). Produtos da mesma `category`, excluindo o slug. Resposta: `{ "items": Product[] }`. |
-| `GET` | `/api/product/:id` | Retorna um `Product` por `id` ou `404`. |
-| `POST` | `/api/orders` | Corpo: `{ "lines": [{ "productId", "quantity" }], "delivery": { "cep", "city", "address" }, "paymentMethod": "card" \| "pix" \| "boleto" }`. Valida endereço (CEP 8 dígitos **ou** cidade + endereço). Resposta `201`: pedido com `id`, `subtotalCents`, linhas com preços do catálogo. |
-| `GET` | `/api/orders/:id` | Retorna o pedido ou `404`. Pedidos ficam em **memória** na API (reinício apaga o histórico). |
-| `GET` | `/api/brands` | Lista marcas para filtros. |
-| `POST` | `/api/products` | Cria produto (admin). |
-| `PUT` | `/api/product/:id` | Atualiza produto por id (admin). |
-| `DELETE` | `/api/product/:id` | Remove produto (admin). |
+| Método   | Caminho                       | Query / notas                                                                                                                                                                                                                                                                           |
+| -------- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET`    | `/api/products`               | `category`, `brand` (slug), `sort` (`name-asc`, `name-desc`, `price-asc`, `price-desc`), opcional `condition` (`novo`, `usado`, `excelente`), opcional `q` (busca em nome/descrição). Resposta: `{ "items": Product[] }`.                                                               |
+| `GET`    | `/api/products/:slug`         | Retorna um `Product` ou `404`.                                                                                                                                                                                                                                                          |
+| `GET`    | `/internal/social-pdp/:slug`  | Resposta **`text/html`** com metas Open Graph / Twitter para crawlers (WhatsApp, etc.). Não é JSON; usada pelo nginx Docker e pelo fluxo de preview na Vercel.                                                                                                                          |
+| `GET`    | `/api/products/:slug/related` | `limit` (1–12, padrão 4). Produtos da mesma `category`, excluindo o slug. Resposta: `{ "items": Product[] }`.                                                                                                                                                                           |
+| `GET`    | `/api/product/:id`            | Retorna um `Product` por `id` ou `404`.                                                                                                                                                                                                                                                 |
+| `POST`   | `/api/orders`                 | Corpo: `{ "lines": [{ "productId", "quantity" }], "delivery": { "cep", "city", "address" }, "paymentMethod": "card" \| "pix" \| "boleto" }`. Valida endereço (CEP 8 dígitos **ou** cidade + endereço). Resposta `201`: pedido com `id`, `subtotalCents`, linhas com preços do catálogo. |
+| `GET`    | `/api/orders/:id`             | Retorna o pedido ou `404`. Pedidos ficam em **memória** na API (reinício apaga o histórico).                                                                                                                                                                                            |
+| `GET`    | `/api/brands`                 | Lista marcas para filtros.                                                                                                                                                                                                                                                              |
+| `POST`   | `/api/products`               | Cria produto (admin).                                                                                                                                                                                                                                                                   |
+| `PUT`    | `/api/product/:id`            | Atualiza produto por id (admin).                                                                                                                                                                                                                                                        |
+| `DELETE` | `/api/product/:id`            | Remove produto (admin).                                                                                                                                                                                                                                                                 |
 
 **Exemplo de item** (campos principais; `imageUrl` e `galleryUrls` usam URLs do Unsplash no mock):
 
@@ -200,17 +213,17 @@ Para E2E pela primeira vez: `npx playwright install chromium`.
 
 ## Rotas principais
 
-| Rota | Descrição |
-|------|-----------|
-| `/` | PLP — listagem; filtros em **query** opcionais: `category`, `brand`, `condition`, `sort`, `q` (ex.: `/?category=feminino&condition=novo&q=linho&sort=price-asc`). |
-| `/produto/:slug` | PDP — detalhe, galeria, favorito e carrinho. |
-| `/favoritos` | Lista de favoritos persistidos (catálogo filtrado por ID). |
-| `/carrinho` | Carrinho persistido. |
-| `/checkout` | Checkout com endereço e método de pagamento; envia `POST /api/orders`. |
-| `/pedido/:orderId` | Confirmação do pedido criado. |
-| `/admin` | Listagem de produtos (admin). |
-| `/admin/novo` | Formulário de novo produto. |
-| `/admin/editar/:id` | Edição de produto existente. |
+| Rota                | Descrição                                                                                                                                                         |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`                 | PLP — listagem; filtros em **query** opcionais: `category`, `brand`, `condition`, `sort`, `q` (ex.: `/?category=feminino&condition=novo&q=linho&sort=price-asc`). |
+| `/produto/:slug`    | PDP — detalhe, galeria, favorito e carrinho.                                                                                                                      |
+| `/favoritos`        | Lista de favoritos persistidos (catálogo filtrado por ID).                                                                                                        |
+| `/carrinho`         | Carrinho persistido.                                                                                                                                              |
+| `/checkout`         | Checkout com endereço e método de pagamento; envia `POST /api/orders`.                                                                                            |
+| `/pedido/:orderId`  | Confirmação do pedido criado.                                                                                                                                     |
+| `/admin`            | Listagem de produtos (admin).                                                                                                                                     |
+| `/admin/novo`       | Formulário de novo produto.                                                                                                                                       |
+| `/admin/editar/:id` | Edição de produto existente.                                                                                                                                      |
 
 ---
 
